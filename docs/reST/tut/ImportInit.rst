@@ -13,7 +13,79 @@ Import and Initialize
 
 :Author: Pete Shinners
 :Contact: pete@shinners.org
+Here is the coding for the "Jumping Through Floating Stones" game:
 
+*Jumping Through Floating Stones Game*
+
+```
+import pygame
+import sys
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Set up some constants
+WIDTH, HEIGHT = 640, 480
+PLAYER_SIZE = 50
+STONE_SIZE = 50
+PLAYER_SPEED = 5
+STONE_SPEED = 2
+
+# Set up some variables
+player_x, player_y = WIDTH / 2, HEIGHT / 2
+stone_x, stone_y = 0, random.randint(0, HEIGHT - STONE_SIZE)
+score = 0
+
+# Create the game window
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= PLAYER_SPEED
+    if keys[pygame.K_RIGHT]:
+        player_x += PLAYER_SPEED
+    if keys[pygame.K_UP]:
+        player_y -= PLAYER_SPEED
+    if keys[pygame.K_DOWN]:
+        player_y += PLAYER_SPEED
+
+    # Move the stone
+    stone_x += STONE_SPEED
+    if stone_x > WIDTH:
+        stone_x = 0
+        stone_y = random.randint(0, HEIGHT - STONE_SIZE)
+        score += 1
+        STONE_SPEED += 0.5
+
+    # Check for collision
+    if (player_x < stone_x + STONE_SIZE and
+        player_x + PLAYER_SIZE > stone_x and
+        player_y < stone_y + STONE_SIZE and
+        player_y + PLAYER_SIZE > stone_y):
+        print("Game Over! Your score is:", score)
+        pygame.quit()
+        sys.exit()
+
+    # Draw everything
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, (255, 0, 0), (player_x, player_y, PLAYER_SIZE, PLAYER_SIZE))
+    pygame.draw.rect(screen, (0, 255, 0), (stone_x, stone_y, STONE_SIZE, STONE_SIZE))
+    font = pygame.font.Font(None, 36)
+    text = font.render("Score: " + str(score), 1, (255, 255, 255))
+    screen.blit(text, (10, 10))
+    pygame.display.flip()
+
+    # Cap the frame rate
+    pygame.time.delay(1000 // 60)
+```
 
 Getting pygame imported and initialized is a very simple process. It is also
 flexible enough to give you control over what is happening. Pygame is a
